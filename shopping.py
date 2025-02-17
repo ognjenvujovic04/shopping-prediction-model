@@ -1,5 +1,6 @@
 import csv
 import sys
+import pandas as pd
 
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
@@ -59,8 +60,28 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
-    raise NotImplementedError
+    df = pd.read_csv(filename)
+    
+    month_to_int = {
+        'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 
+        'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7,
+        'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+    }
 
+    df['Month'] = df['Month'].map(month_to_int)
+    df['Weekend'] = df['Weekend'].map({"TRUE": 1, "FALSE": 0})
+    df['Revenue'] = df['Revenue'].map({"TRUE": 1, "FALSE": 0})
+    df['VisitorType'] = df['VisitorType'].map({"Returning_Visitor": 1, "New_Visitor": 0})
+    
+    print(df['Month'].unique())
+    print(df['Weekend'].unique())
+    print(df['Revenue'].unique())
+    print(df['VisitorType'].unique())
+
+    x = df.drop(columns=['Revenue'])
+    y = df['Revenue']
+    
+    return (x, y)
 
 def train_model(evidence, labels):
     """
